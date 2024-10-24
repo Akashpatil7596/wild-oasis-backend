@@ -66,7 +66,7 @@ export class AuthController {
          from: "ap3135198@gmail.com",
          subject: "Welcome to our app!",
          template: "register.hbs",
-         context: { name: newUser.userName },
+         context: { name: newUser.userName, otp: newUser.otp },
       });
 
       return newUser;
