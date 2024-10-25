@@ -7,7 +7,11 @@ async function bootstrap() {
 
    app.useGlobalPipes(new ValidationPipe());
 
-   app.enableCors();
+   app.enableCors({
+       origin: 'https://courageous-tartufo-efcbe9.netlify.app/', // Specify your Netlify site
+       methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+       credentials: true,
+   });
 
    await app.listen(process.env.PORT ?? 8080);
 }
