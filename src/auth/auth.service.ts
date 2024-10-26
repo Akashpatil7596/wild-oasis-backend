@@ -16,12 +16,16 @@ export class AuthService {
       return await new this.usersModel(registerDto).save();
    }
 
-   findAll() {
-      return `This action returns all auth`;
+   async findAll() {
+      return await this.usersModel.find()
    }
 
    async findOne(query) {
       return await this.usersModel.findOne(query);
+   }
+
+   async findById(id:number) {
+      return await this.usersModel.findById(id);
    }
 
    update(id: number, updateAuthDto: any) {

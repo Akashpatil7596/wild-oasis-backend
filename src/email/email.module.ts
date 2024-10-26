@@ -2,7 +2,7 @@ import { Module } from "@nestjs/common";
 import { EmailService } from "./email.service";
 import { EmailController } from "./email.controller";
 import { MailerModule } from "@nestjs-modules/mailer";
-import { join } from "path";
+import { join, resolve } from "path";
 import { HandlebarsAdapter } from "@nestjs-modules/mailer/dist/adapters/handlebars.adapter";
 
 @Module({
@@ -19,7 +19,7 @@ import { HandlebarsAdapter } from "@nestjs-modules/mailer/dist/adapters/handleba
             from: "dummyforaltair@gmail.com",
          },
          template: {
-            dir: join(__dirname, "../../views/mail-templates"),
+            dir: resolve("views/mail-templates"),
             adapter: new HandlebarsAdapter(),
             options: {
                strict: true,

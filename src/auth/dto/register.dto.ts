@@ -28,4 +28,6 @@ export class RegisterDto {
    city: string;
 
    otp?: number;
+
+   userProfile: any;
 }

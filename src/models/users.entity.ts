@@ -8,6 +8,7 @@ const UserSchema = new Schema({
    city: String,
    state: String,
    otp: Number,
+   userProfile: String,
 });
 
 interface Users extends Document {
@@ -18,6 +19,7 @@ interface Users extends Document {
    city: string;
    state: string;
    otp: number;
+   userProfile: string;
 }
 
 export { UserSchema, Users };

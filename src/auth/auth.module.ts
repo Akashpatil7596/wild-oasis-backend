@@ -5,6 +5,7 @@ import { MongooseModule } from "@nestjs/mongoose";
 import { UserSchema } from "src/models/users.entity";
 import { EmailModule } from "src/email/email.module";
 import { JwtModule } from "@nestjs/jwt";
+import { S3Service } from "helper/s3.config";
 
 @Module({
    imports: [
@@ -17,6 +18,6 @@ import { JwtModule } from "@nestjs/jwt";
       EmailModule,
    ],
    controllers: [AuthController],
-   providers: [AuthService],
+   providers: [AuthService, S3Service],
 })
 export class AuthModule {}

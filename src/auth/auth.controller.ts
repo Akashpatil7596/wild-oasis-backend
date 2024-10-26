@@ -1,16 +1,30 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from "@nestjs/common";
+import {
+   Controller,
+   Get,
+   Post,
+   Body,
+   Patch,
+   Param,
+   Delete,
+   UseInterceptors,
+   UploadedFiles,
+   UploadedFile,
+} from "@nestjs/common";
 import { AuthService } from "./auth.service";
 import { RegisterDto } from "./dto/register.dto";
 import { VerifyOtpDto } from "./dto/verify-otp.dto";
 import { EmailService } from "src/email/email.service";
 import { Users } from "src/models/users.entity";
 import { LoginDto } from "./dto/login.dto";
+import { FileFieldsInterceptor, FileInterceptor } from "@nestjs/platform-express";
+import { S3Service } from "helper/s3.config";
 
 @Controller("auth")
 export class AuthController {
    constructor(
       private readonly authService: AuthService,
       private readonly emailService: EmailService,
+      private readonly s3Service: S3Service,
    ) {}
 
    @Post("verify-otp")
@@ -35,18 +49,18 @@ export class AuthController {
          password: loginDto.password,
       });
 
-      const createToken = this.authService.createJwtToken(isUserExist);
-
-      isUserExist = JSON.parse(JSON.stringify(isUserExist));
-
-      isUserExist["token"] = createToken;
-
       if (!isUserExist) {
          return {
             success: false,
             message: "User not exists",
          };
       }
+
+      const createToken = this.authService.createJwtToken(isUserExist);
+
+      isUserExist = JSON.parse(JSON.stringify(isUserExist));
+
+      isUserExist["token"] = createToken;
 
       return {
          success: true,
@@ -55,8 +69,30 @@ export class AuthController {
       };
    }
 
+   @Get(":id")
+   findOne(@Param("id") id: number) {
+      return this.authService.findById(id);
+   }
+
+   @Patch(":id")
+   update(@Param("id") id: string, @Body() updateAuthDto: any) {
+      return this.authService.update(+id, updateAuthDto);
+   }
+
+   @Delete(":id")
+   remove(@Param("id") id: string) {
+      return this.authService.remove(+id);
+   }
+
    @Post()
-   async create(@Body() registerDto: RegisterDto) {
+   @UseInterceptors(FileInterceptor("userProfile"))
+   async create(@Body() registerDto: RegisterDto, @UploadedFile() file: any) {
+      if (file) {
+         this.s3Service.upload(file?.originalname, file?.buffer);
+
+         registerDto.userProfile = "users" + "/" + file?.originalname;
+      }
+
       registerDto.otp = this.generateRandomOTP();
 
       const newUser = await this.authService.create(registerDto);
@@ -75,21 +111,6 @@ export class AuthController {
    @Get()
    findAll() {
       return this.authService.findAll();
-   }
-
-   @Get(":id")
-   findOne(@Param("id") id: string) {
-      return this.authService.findOne(+id);
-   }
-
-   @Patch(":id")
-   update(@Param("id") id: string, @Body() updateAuthDto: any) {
-      return this.authService.update(+id, updateAuthDto);
-   }
-
-   @Delete(":id")
-   remove(@Param("id") id: string) {
-      return this.authService.remove(+id);
    }
 
    private generateRandomOTP() {
