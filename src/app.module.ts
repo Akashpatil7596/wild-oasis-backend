@@ -4,6 +4,7 @@ import { AppService } from "./app.service";
 import { AuthModule } from "./auth/auth.module";
 import { MongooseModule } from "@nestjs/mongoose";
 import { EmailModule } from "./email/email.module";
+import { ConfigModule } from "@nestjs/config";
 
 @Module({
    imports: [
@@ -12,6 +13,7 @@ import { EmailModule } from "./email/email.module";
          "mongodb+srv://root:root@cluster-demo.gf2e23g.mongodb.net/?retryWrites=true&w=majority&appName=Cluster-Demo",
          { dbName: "the-wild-oasis-database" },
       ),
+      ConfigModule.forRoot({ isGlobal: true }),
       EmailModule,
    ],
    controllers: [AppController],
