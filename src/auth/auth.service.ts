@@ -17,14 +17,14 @@ export class AuthService {
    }
 
    async findAll() {
-      return await this.usersModel.find()
+      return await this.usersModel.find();
    }
 
    async findOne(query) {
       return await this.usersModel.findOne(query);
    }
 
-   async findById(id:number) {
+   async findById(id: number) {
       return await this.usersModel.findById(id);
    }
 
@@ -38,5 +38,9 @@ export class AuthService {
 
    createJwtToken(payload) {
       return this.jwtService.sign({ id: payload._id.toString() });
+   }
+
+   async verifyJwtToken(token) {
+      return await this.jwtService.verify(token);
    }
 }

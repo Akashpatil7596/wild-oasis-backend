@@ -13,7 +13,7 @@ import { S3Service } from "helper/s3.config";
       JwtModule.register({
          global: true,
          secret: "I_AM_BATMAN",
-         signOptions: { expiresIn: "60s" },
+         signOptions: { expiresIn: "3d" },
       }),
       EmailModule,
    ],

@@ -9,6 +9,7 @@ import {
    UseInterceptors,
    UploadedFiles,
    UploadedFile,
+   Headers,
 } from "@nestjs/common";
 import { AuthService } from "./auth.service";
 import { RegisterDto } from "./dto/register.dto";
@@ -70,8 +71,37 @@ export class AuthController {
    }
 
    @Get(":id")
-   findOne(@Param("id") id: number) {
-      return this.authService.findById(id);
+   async findOne(@Param("id") id: number, @Headers("Authorization") token: string) {
+      const isVerifyJwt = await this.authService.verifyJwtToken(token.split(" ")[1]);
+
+      if (!isVerifyJwt?.id) {
+         return {
+            success: false,
+            message: "Token not allow",
+         };
+      }
+
+      if (isVerifyJwt?.id !== id) {
+         return {
+            success: false,
+            message: "Token not allow",
+         };
+      }
+
+      const user = await this.authService.findById(id);
+
+      if (!user) {
+         return {
+            success: false,
+            message: "User not find",
+         };
+      }
+
+      return {
+         success: true,
+         message: "User detail fetched",
+         data: user,
+      };
    }
 
    @Patch(":id")
